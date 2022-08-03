@@ -11,7 +11,9 @@ import time
 import numpy as np
 from pycocotools.cocoeval import COCOeval
 
-from .jit_ops import FastCOCOEvalOp
+# from .jit_ops import FastCOCOEvalOp
+from yolox.layers import FastCOCOEvalOp
+FastCOCOEvalOp().jit_load()
 
 
 class COCOeval_opt(COCOeval):

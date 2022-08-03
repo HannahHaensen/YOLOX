@@ -5,6 +5,39 @@
 import torch
 import torch.nn as nn
 
+def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
+    """3x3 convolution with padding"""
+    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
+                     padding=dilation, groups=groups, bias=False, dilation=dilation)
+
+def conv1x1(in_planes, out_planes, stride=1):
+    """1x1 convolution"""
+    return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
+
+
+def upconv(in_planes, out_planes, kernel_size=4):
+    return nn.Sequential(
+        nn.ConvTranspose2d(in_planes, out_planes, kernel_size=kernel_size, stride=2, padding=1),
+        nn.BatchNorm2d(out_planes),
+        nn.LeakyReLU(inplace=True)
+    )
+
+def iconv24(in_planes):
+    return nn.Sequential(
+        nn.Conv2d(in_planes, 24, kernel_size=3, stride=1, padding=1),
+        nn.LeakyReLU(inplace=True)
+    )
+
+def pred(out_planes):
+    return nn.Sequential(
+        nn.Conv2d(24, out_planes, kernel_size=3, padding=1),
+    )
+
+def CAM_Convs(in_planes):
+    return nn.Sequential(
+        nn.Conv2d(in_planes+6, in_planes, kernel_size=3, padding=1),
+        nn.LeakyReLU(inplace=True)
+    )
 
 class SiLU(nn.Module):
     """export-friendly version of nn.SiLU()"""
@@ -25,6 +58,11 @@ def get_activation(name="silu", inplace=True):
         raise AttributeError("Unsupported act type: {}".format(name))
     return module
 
+def CAM_Convs(in_planes):
+    return nn.Sequential(
+        nn.Conv2d(in_planes+6, in_planes, kernel_size=3, padding=1),
+        nn.LeakyReLU(inplace=True)
+    )
 
 class BaseConv(nn.Module):
     """A Conv2d -> Batchnorm -> silu/leaky relu block"""

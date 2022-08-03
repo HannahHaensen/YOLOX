@@ -17,6 +17,7 @@ class YOLOX(nn.Module):
 
     def __init__(self, backbone=None, head=None):
         super().__init__()
+        print("YOLOX")
         if backbone is None:
             backbone = YOLOPAFPN()
         if head is None:
